@@ -1,14 +1,27 @@
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "edge") {
     try {
-      // Dynamic import to avoid edge runtime bundling issues
+      // Use Function constructor to create a dynamic import that absolutely cannot
+      // be statically analyzed or transformed by Next.js bundler
+      // This prevents the bundler from converting import() to require()
       console.log("Starting Redis World...");
-      const { createWorld } = await import("@workflow-worlds/redis");
-      const { getWorld } = await import("workflow/runtime");
+
+      // Create a function that performs dynamic import - this cannot be statically analyzed
+      const dynamicImport = new Function(
+        "specifier",
+        "return import(specifier)"
+      );
+
+      // Use the dynamic import function to load ES modules
+      const redisModule = await dynamicImport("@workflow-worlds/redis");
+      const runtimeModule = await dynamicImport("workflow/runtime");
+
+      const { createWorld } = redisModule;
+      const { getWorld } = runtimeModule;
+
       let world = getWorld();
       if (!world) {
-        // @ts-expect-error - createWorld is not typed
-        world = createWorld();
+        world = createWorld() as typeof world;
       }
       await world.start?.();
       console.log("Redis World started");
