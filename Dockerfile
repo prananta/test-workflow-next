@@ -62,6 +62,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@workflow ./node_mod
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/workflow ./node_modules/workflow
 # Copy dependencies of @workflow/world-postgres
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/pg-boss ./node_modules/pg-boss
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/postgres ./node_modules/postgres
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@vercel ./node_modules/@vercel
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/cbor-x ./node_modules/cbor-x
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/dotenv ./node_modules/dotenv
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/drizzle-orm ./node_modules/drizzle-orm
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/ulid ./node_modules/ulid
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/zod ./node_modules/zod
 
 USER nextjs
 
