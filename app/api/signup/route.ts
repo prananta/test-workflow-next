@@ -1,7 +1,8 @@
 import { start } from "workflow/api";
-import { handleUserSignup } from "@/app/workflows/user-signup";
+import { handleUserSignup } from "@/workflows/user-signup";
 import { NextResponse } from "next/server";
-import { getWorld } from "@/app/workflows/world/postgres";
+import { getWorld } from "@/workflows/world/postgres";
+
 export async function POST(request: Request) {
   const { email } = await request.json();
 
