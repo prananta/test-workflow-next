@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - WORKFLOW_TARGET_WORLD="@workflow/world-postgres"
+      - WORKFLOW_TARGET_WORLD=@workflow/world-postgres
       - NODE_ENV=production
       - WORKFLOW_DEBUG=${WORKFLOW_DEBUG:-1}
       - WORKFLOW_POSTGRES_URL=${WORKFLOW_POSTGRES_URL:-postgresql://postgres:postgres@localhost:5432/postgres}
