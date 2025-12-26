@@ -1,8 +1,9 @@
 import { start } from "workflow/api";
 import { handleUserSignup } from "@/workflows/user-signup";
-import { NextResponse } from "next/server";
+import { connection, NextResponse } from "next/server";
 
 export async function POST(request: Request) {
+  await connection();
   console.log(`Receiving post request to /api/signup`);
   const { email } = await request.json();
 
