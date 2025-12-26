@@ -44,6 +44,7 @@ ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
+RUN apk add --no-cache libc6-compat
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
@@ -54,21 +55,17 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy node_modules for dynamically imported packages that aren't included in standalone
+# Install only production dependencies for dynamically imported packages
 # The @workflow/world-postgres package is dynamically imported based on env vars
 # so Next.js standalone output doesn't detect it during build
-# We need to copy the package and all its dependencies
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@workflow ./node_modules/@workflow
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/workflow ./node_modules/workflow
-# Copy dependencies of @workflow/world-postgres
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/pg-boss ./node_modules/pg-boss
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/postgres ./node_modules/postgres
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@vercel ./node_modules/@vercel
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/cbor-x ./node_modules/cbor-x
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/dotenv ./node_modules/dotenv
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/drizzle-orm ./node_modules/drizzle-orm
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/ulid ./node_modules/ulid
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/zod ./node_modules/zod
+# Installing production deps ensures all runtime dependencies are available
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package-lock.json* ./package-lock.json*
+RUN \
+  if [ -f package-lock.json ]; then npm ci --omit=dev; \
+  else echo "package-lock.json not found." && exit 1; \
+  fi && \
+  chown -R nextjs:nodejs /app/node_modules
 
 USER nextjs
 
