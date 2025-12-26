@@ -57,8 +57,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Copy node_modules for dynamically imported packages that aren't included in standalone
 # The @workflow/world-postgres package is dynamically imported based on env vars
 # so Next.js standalone output doesn't detect it during build
+# We need to copy the package and all its dependencies
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@workflow ./node_modules/@workflow
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/workflow ./node_modules/workflow
+# Copy dependencies of @workflow/world-postgres
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/pg-boss ./node_modules/pg-boss
 
 USER nextjs
 
