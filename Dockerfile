@@ -44,7 +44,6 @@ ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN apk add --no-cache libc6-compat
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
@@ -52,17 +51,10 @@ COPY --from=builder /app/public ./public
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
+# The @workflow/world-postgres package is now statically imported in app/api/_workflow-deps/route.ts
+# so Next.js standalone output should detect it during build and include it automatically
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Install only production dependencies for dynamically imported packages
-# The @workflow/world-postgres package is dynamically imported based on env vars
-# so Next.js standalone output doesn't detect it during build
-# Installing production deps ensures all runtime dependencies are available
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/package-lock.json ./package-lock.json
-RUN npm ci --omit=dev && \
-  chown -R nextjs:nodejs /app/node_modules
 
 USER nextjs
 
