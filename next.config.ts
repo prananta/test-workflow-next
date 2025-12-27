@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
       "./node_modules/cbor-x/**",
       "./node_modules/@workflow/**",
       "./node_modules/@vercel/**",
+      "./node_modules/async-sema/**",
     ],
   },
 };
