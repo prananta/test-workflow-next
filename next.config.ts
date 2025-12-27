@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
       "./node_modules/@workflow/errors/**",
       "./node_modules/@workflow/world/**",
       "./node_modules/@workflow/world-local/**",
+      "./node_modules/@vercel/queue/**",
     ],
   },
 };
