@@ -13,11 +13,8 @@ const nextConfig: NextConfig = {
       "./node_modules/drizzle-orm/**",
       "./node_modules/ulid/**",
       "./node_modules/cbor-x/**",
-      "./node_modules/@workflow/errors/**",
-      "./node_modules/@workflow/world/**",
-      "./node_modules/@workflow/world-local/**",
-      "./node_modules/@vercel/queue/**",
-      "./node_modules/@vercel/oidc/**",
+      "./node_modules/@workflow/**",
+      "./node_modules/@vercel/**",
     ],
   },
 };
